@@ -25,7 +25,7 @@ public class ParkingRepoImplDB {
 			}
 			//"jdbc:oracle:thin:@myhost:1521:orcl", "scott", "tiger"
 			try {
-				con=DriverManager.getConnection("jdbc:mysql://localhost:3306/test","","");
+				con=DriverManager.getConnection("jdbc:mysql://192.168.56.1:3306/test","","");
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}		

@@ -4,15 +4,17 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE")
+         classpath 'org.cloudfoundry:cf-gradle-plugin:1.1.2'
     }
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin: 'war'
 apply plugin: 'org.springframework.boot'
 
-jar {
+war {
     baseName = 'gs-spring-boot'
     version =  '0.1.0'
 }
@@ -36,4 +38,24 @@ dependencies {
     // end::actuator[]
    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
     testCompile("junit:junit")
+}
+
+apply plugin: 'cloudfoundry'
+
+cloudfoundry {
+    target = "https://api.run.pivotal.io"
+   // org = "Hackathon"
+   application = "SmartOff"
+    space = "development"
+    file = file("/build/libs/gs-spring-boot-0.1.0.war")
+    uri = "SmartOff.cfapps.io"
+    memory = 512
+    instances = 1
+    env = [ "greeting": "Hello" ]
+    services {
+        "my_rabbitmq" {
+            label = "elephantsql"
+            plan = "turtle"
+                   }
+    }
 }
