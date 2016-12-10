@@ -1,10 +1,12 @@
-/*package smartoff.repo;
+package smartoff.repo;
 
+import java.awt.List;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,14 +25,12 @@ public class ParkingRepoImplDB {
 			}
 			//"jdbc:oracle:thin:@myhost:1521:orcl", "scott", "tiger"
 			try {
-				con=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1576:orcl","scott","tiger");
-				PreparedStatement showSpace = con.prepareStatement("create table Slots (Emp_id varchar2(50) primary key,slot_id varchar2(50) unique); ");
-				showSpace.executeQuery();
+				con=DriverManager.getConnection("jdbc:mysql://localhost:3306/test","","");
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}		
 		}
-		public boolean save(ParkingPojo b) {
+		/*public boolean save(ParkingPojo b) {
 			try {
 				PreparedStatement saveBlog = con.prepareStatement("INSERT INTO park VALUES(NULL,?,?,?,?)");
 				String title = b.getTitle();
@@ -145,16 +145,17 @@ public class ParkingRepoImplDB {
 			}
 			return "Not Added";
 		}
-
+*/
 		public Map<String, String> showSpace() {
 			Map<String, String> showMap = new HashMap<String, String>();		
 			try{
-				PreparedStatement showSpace = con.prepareStatement("SELECT * FROM Slots)");
+				PreparedStatement showSpace = con.prepareStatement("SELECT * FROM slots");
 				ResultSet space = showSpace.executeQuery();
 				while(space.next()){
 					showMap.put(space.getString(1), space.getString(2));
 				}
 			}catch(Exception e){
+				System.out.println("showSpace");
 					e.printStackTrace();
 			}
 			return showMap;
@@ -165,15 +166,48 @@ public class ParkingRepoImplDB {
 			try{
 				String emp_id = p.getEmpID();
 				String slot_id= p.getSlotID();
-				PreparedStatement saveComment = con.prepareStatement("INSERT INTO Slots (Emp_id,slot_id) VALUES"
+				PreparedStatement saveComment = con.prepareStatement("INSERT INTO Slots (emp_ID,slot_ID) VALUES"
 						+ "('"+emp_id+"',' "+slot_id+"')");
 				saveComment.execute();
 				finalResult = showSpace();
 			}catch(Exception e){
+				System.out.println("allotSpace");
 				e.printStackTrace();
 			}
 			return finalResult;
 		}
-	}
-
-*/
+		
+		public java.util.List<String> displayFreeSpace(){
+			java.util.List<String> emptySlots = new ArrayList<String>();
+			try{
+				PreparedStatement showSpace = con.prepareStatement("SELECT slot_ID FROM slots WHERE emp_ID=''");
+				ResultSet space = showSpace.executeQuery();
+				while(space.next()){
+					emptySlots.add(space.getString(1));
+				}
+			}catch(Exception e){
+				System.out.println("display");
+				e.printStackTrace();
+		}return emptySlots;
+		}
+		
+		public String deallocateParkingSpace(ParkingPojo p){
+			String slot_ID = "";
+			try{
+				String emp_id = p.getEmpID();
+				PreparedStatement saveComment = con.prepareStatement("SELECT slot_ID from slots where emp_ID="+emp_id);
+				ResultSet space = saveComment.executeQuery();
+				while(space.next()){
+					slot_ID = space.getString(1);
+				}
+				PreparedStatement saveComment2 = con.prepareStatement("DELETE emp_ID FROM slots where emp_ID="+emp_id);
+				saveComment2.execute();
+		}catch(Exception e){
+			System.out.println("display");
+			e.printStackTrace();
+			return slot_ID+" Not empty - system failure";
+		}
+			return slot_ID+ " is Empty Now";
+		}
+}
+	

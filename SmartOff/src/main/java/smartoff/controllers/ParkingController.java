@@ -1,5 +1,6 @@
 package smartoff.controllers;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import smartoff.pojo.ParkingPojo;
 import smartoff.service.ParkingService;
 
 @RestController
-@RequestMapping("/hello-world")
+@RequestMapping("/ParkingController")
 @EnableAutoConfiguration
 public class ParkingController {
 	@Autowired
@@ -31,8 +32,18 @@ public class ParkingController {
 	public Map<String,String> allocateParkingSpace(@RequestBody ParkingPojo parkingpojo){
 	return service.allotParkingSpace(parkingpojo);
 		
-	} 	
+	} 
 	
+	@RequestMapping(value= ("/deallocate"),method=RequestMethod.POST)
+	public String deallocateParkingSpace(@RequestBody ParkingPojo parkingpojo){
+	return service.deallocateParkingSpace(parkingpojo);
+		
+	} 
 	
+	@RequestMapping(value= ("/displayFreeSpace"),method=RequestMethod.GET)
+	public List<String> freeParkingSpace(){
+	return service.displayFreeSpace();
+		
+	} 
 	
 }

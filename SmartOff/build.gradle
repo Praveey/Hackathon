@@ -34,6 +34,6 @@ dependencies {
     // tag::actuator[]
     compile("org.springframework.boot:spring-boot-starter-actuator")
     // end::actuator[]
-   // compile files ("C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib\ojdbc6.jar")
+   compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
     testCompile("junit:junit")
 }
